@@ -15,12 +15,20 @@
   <name>demo</name>
   <description>Demo project for Spring Boot</description>
   <properties>
+    <docker.repository>zunchongdadui-docker.pkg.coding.net/diyigexiangmu</docker.repository>
     <java.version>11</java.version>
   </properties>
+
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
 
     <dependency>
@@ -31,12 +39,84 @@
   </dependencies>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.4.10</version>
+        <executions>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>build</goal>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <repository>${docker.repository}/${profiles.active}/test</repository>
+          <tag>${project.version}</tag>
+          <buildArgs>
+            <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+          </buildArgs>
+        </configuration>
+      </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources/${profiles.active}</directory>
+      </resource>
+    </resources>
   </build>
+
+  <profiles>
+    <!--内网环境-->
+    <!--    <profile>-->
+    <!--      <id>dianli</id>-->
+    <!--      <properties>-->
+    <!--        <profiles.active>dianli</profiles.active>-->
+    <!--      </properties>-->
+    <!--    </profile>-->
+    <!--测试环境-->
+    <profile>
+      <id>qa</id>
+      <properties>
+        <profiles.active>qa</profiles.active>
+      </properties>
+    </profile>
+    <!--开发环境，默认-->
+    <profile>
+      <id>dev</id>
+      <properties>
+        <profiles.active>dev</profiles.active>
+      </properties>
+      <!--activation用来指定激活方式，可以根据jdk环境，环境变量，文件的存在或缺失 -->
+      <activation>
+        <!--这个字段表示默认激活 -->
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
 
 </project>
