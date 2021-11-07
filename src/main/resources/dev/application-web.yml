@@ -1,0 +1,25 @@
+server:
+  tomcat:
+    min-spare-threads: 4
+    max-threads: 64
+    max-connections: 10000
+    accept-count: 300
+    max-http-form-post-size: 0
+    basedir:
+      ./logs
+    accesslog:
+      buffered: true
+      directory: access-logs
+      enabled: true
+      file-date-format: yyyy-MM-dd
+      pattern: "%t,%T,\"%r\",%s,%b,%{Referer}i,\"%{User-Agent}i\""
+    connection-timeout: 8000
+  max-http-header-size: 1024000
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size:
+        1024MB
+      max-request-size:
+        1024MB
