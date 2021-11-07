@@ -1,4 +1,4 @@
 spring:
   redis:
-    host: 103.45.250.90
-    password: 19971003
+    host: ${yourHost}
+    password: ${yourPassword}
